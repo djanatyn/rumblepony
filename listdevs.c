@@ -35,7 +35,7 @@ int main(void)
 		fprintf(stderr, "data: %d\n", data);
 	} else {
 		for (int i = 0; i < LENGTH; i++) {
-			printf("%c", data[i]);
+			putchar(data[i]);
 		}
 	}
 
