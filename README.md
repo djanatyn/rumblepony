@@ -11,33 +11,17 @@ The goal: **write a Pony program that rumbles a GameCube controller (connected v
 
 # usage
 
-## running `libusb` example code from NixOS
-
-This is example code from `libusb`:
-* [https://github.com/libusb/libusb/blob/4e2de881cf0f8b38b1e19c078d19b4628f38c732/examples/listdevs.c]
-
-```sh
-; nix eval --raw .#listdevs.buildPhase
-gcc listdevs.c "/nix/store/4izsgifdpqnfbwy5mlb47c7ab553gyhv-libusb-1.0.25/lib/libusb-1.0.so" \
-  -I "/nix/store/y9mg8d6ic9pqa72376dkygyv2wy7bs95-libusb-1.0.25-dev/include/libusb-1.0" \
-  -o listdevs
+``` sh
+nix build github:djanatyn/rumblepony#read-gcc -o read-gcc \
+    && watch -n1 './read-gcc/bin/read-gcc | xxd'
 ```
+```
+Every 1.0s: ./read-gcc/bin/read-gcc | xxd
 
-I added this to the flake to test using [`libusb` API functions](https://libusb.sourceforge.io/api-1.0/libusb_api.html), starting from the simplest working example:
-``` shell-session
-; nix build github:djanatyn/rumblepony#listdevs -o listdevs \
-    && ./listdevs/bin/listdevs
-1d6b:0003 (bus 4, device 1)
-057e:0337 (bus 3, device 103) path: 3
-1d6b:0002 (bus 3, device 1)
-1d6b:0003 (bus 2, device 1)
-feed:6061 (bus 1, device 90) path: 5.4
-1532:0e03 (bus 1, device 89) path: 5.3
-046d:c539 (bus 1, device 88) path: 5.2
-1a40:0101 (bus 1, device 87) path: 5
-046d:0ab7 (bus 1, device 84) path: 4
-0a12:0001 (bus 1, device 75) path: 3
-1d6b:0002 (bus 1, device 1)
+device found: 0x19F0FC0
+00000000: 2104 0000 0000 0000 0000 1400 007a 8a78  !............z.x
+00000010: 751f 2504 0000 0000 0000 0000 0400 0000  u.%.............
+00000020: 0000 0000 00                             .....
 ```
 
 ## rumblepony
