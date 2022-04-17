@@ -3,48 +3,35 @@
 
 int main(void)
 {
-	libusb_device **devs;
-	int r;
-	ssize_t cnt;
-
 	// init libusb
 	if (libusb_init(NULL) < 0) { return 1; }
 
-	// get all devices
-	if (libusb_get_device_list(NULL, &devs) < 0) {
-		libusb_exit(NULL);
-		return 1;
-	}
+	// adapter vid is 0x057e
+	// adapter pid is 0x0337
+	libusb_device_handle *handle = libusb_open_device_with_vid_pid(NULL, 0x057e, 0x0337);
 
-	// does it makes sense to set this to NULL?
-	libusb_device *adapter = NULL;
-	libusb_device *dev;
-	int i = 0;
-
-	// look for mayflash adapter
-	while ((dev = devs[i++]) != NULL) {
-		struct libusb_device_descriptor desc;
-		if (libusb_get_device_descriptor(dev, &desc) > 0) {
-			fprintf(stderr, "failed to get device descriptor");
-			continue;
-		}
-
-		// adapter vid is 0x057e
-		// adapter pid is 0x0337
-		if (desc.idVendor == 0x057e) {
-			printf("%04x:%04x\n", desc.idVendor, desc.idProduct);
-			adapter = dev;
-		} else { continue; }
-	}
-
-	if (adapter != NULL) {
-		printf("found adapter\n");
+	// check for handle
+	if (handle != NULL) {
+		printf("device found: 0x%X\n", handle);
 	} else {
-		printf("adapter not found\n");
-	};
+		printf("device not found\n");
+	}
 
-	libusb_free_device_list(devs, 1);
+	unsigned char data;
+	int ret, len;
+	ret = libusb_interrupt_transfer(handle, 0x81, data, 1, &len, 0);
+
+	if (ret != 0) {
+		printf("failed\n");
+		printf("ret: %d\n", ret);
+		printf("len: %d\n", len);
+		printf("data: %d\n", data);
+	} else {
+		printf("%d\n", len);
+		printf("%x\n", data);
+	}
+
+	// quit
 	libusb_exit(NULL);
-
 	return 0;
 }
