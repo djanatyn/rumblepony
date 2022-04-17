@@ -17,9 +17,9 @@ int main(void)
 
 	// abort if handle not found
 	if (handle != NULL) {
-		printf("device found: 0x%X\n", handle);
+		fprintf(stderr, "device found: 0x%X\n", handle);
 	} else {
-		printf("device not found\n");
+		fprintf(stderr, "device not found\n");
 		return 1;
 	}
 
@@ -29,12 +29,14 @@ int main(void)
 	ret = libusb_interrupt_transfer(handle, MAYFLASH_ENDPOINT, data, LENGTH, &len, 0);
 
 	if (ret != 0) {
-		printf("failed\n");
-		printf("ret: %d\n", ret);
-		printf("len: %d\n", len);
-		printf("data: %d\n", data);
+		fprintf(stderr, "failed\n");
+		fprintf(stderr, "ret: %d\n", ret);
+		fprintf(stderr, "len: %d\n", len);
+		fprintf(stderr, "data: %d\n", data);
 	} else {
-		printf("%x\n", data);
+		for (int i = 0; i < LENGTH; i++) {
+			printf("%c", data[i]);
+		}
 	}
 
 	libusb_exit(NULL);
