@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "libusb.h"
 
+
 int main(void)
 {
 	// init libusb
@@ -17,9 +18,10 @@ int main(void)
 		printf("device not found\n");
 	}
 
-	unsigned char data;
+	const int LENGTH = 1;
+	unsigned char data[LENGTH];
 	int ret, len;
-	ret = libusb_interrupt_transfer(handle, 0x81, data, 1, &len, 0);
+	ret = libusb_interrupt_transfer(handle, 0x81, data, LENGTH, &len, 0);
 
 	if (ret != 0) {
 		printf("failed\n");
