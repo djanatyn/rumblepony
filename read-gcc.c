@@ -23,33 +23,56 @@ struct ControllerInfo {
 	struct Controller p4;
 };
 
-int main(void)
-{
-	// init libusb
-	if (libusb_init(NULL) < 0) { return 1; }
+struct AdapterHandle {
+	libusb_device_handle *handle;
+};
 
-	// get mayflash handle
+const int ERR_ADAPTER_NOT_FOUND = 1;
+
+// try to open mayflash adapter, setting handle
+int open_adapter(struct AdapterHandle *adapter_handle) {
 	libusb_device_handle *handle =
 		libusb_open_device_with_vid_pid(NULL, MAYFLASH_VID, MAYFLASH_PID);
 
 	// abort if handle not found
 	if (handle != NULL) {
-		fprintf(stderr, "device found: 0x%X\n", handle);
+		adapter_handle->handle = handle;
+		return 0;
 	} else {
-		fprintf(stderr, "device not found\n");
-		return 1;
+		return ERR_ADAPTER_NOT_FOUND;
 	}
+}
+
+int main(void)
+{
+	// init libusb
+	if (libusb_init(NULL) < 0) { return 1; }
+
+	struct AdapterHandle adapter;
+	int r;
+	r = open_adapter(&adapter);
+	switch (r) {
+		case 0:
+			fprintf(stderr, "device found: 0x%X\n", adapter.handle);
+			break;
+		case ERR_ADAPTER_NOT_FOUND:
+			fprintf(stderr, "device not found\n");
+			return 1;
+		default:
+			fprintf(stderr, "unknown error");
+			return 1;
+	};
 
 	// prepare buffer for usb interrupt transfer
 	unsigned char data[LENGTH];
 	int ret, len;
-	ret = libusb_interrupt_transfer(handle, MAYFLASH_ENDPOINT, data, LENGTH, &len, 0);
+	ret = libusb_interrupt_transfer(adapter.handle, MAYFLASH_ENDPOINT, data, LENGTH, &len, 0);
 
 	if (ret != 0) {
 		fprintf(stderr, "failed\n");
 		fprintf(stderr, "ret: %d\n", ret);
 		fprintf(stderr, "len: %d\n", len);
-		fprintf(stderr, "data: %d\n", data);
+		return 1;
 	} else {
 		/* for (int i = 0; i < LENGTH; i++) { */
 		/* 	putchar(data[i]); */
