@@ -70,16 +70,10 @@ int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info)
 			unsigned char *startp3 = startp2 + CONTROLLER_WIDTH;
 			unsigned char *startp4 = startp3 + CONTROLLER_WIDTH;
 
-			struct Controller p1, p2, p3, p4;
 			memcpy(&(info->p1.a), startp1 + A_BUTTON_OFFSET, sizeof(bool));
 			memcpy(&(info->p2.a), startp2 + A_BUTTON_OFFSET, sizeof(bool));
 			memcpy(&(info->p3.a), startp3 + A_BUTTON_OFFSET, sizeof(bool));
 			memcpy(&(info->p4.a), startp4 + A_BUTTON_OFFSET, sizeof(bool));
-
-			printf(info->p1.a ? "p1: true\n" : "p1: false\n");
-			printf(info->p2.a ? "p2: true\n" : "p2: false\n");
-			printf(info->p3.a ? "p3: true\n" : "p3: false\n");
-			printf(info->p4.a ? "p4: true\n" : "p4: false\n");
 
 			return 0;
 		}
@@ -109,6 +103,11 @@ int main(void)
 
 	struct ControllerInfo info;
 	r = check_controller(&adapter, &info);
+
+	printf(info.p1.a ? "p1: true\n" : "p1: false\n");
+	printf(info.p2.a ? "p2: true\n" : "p2: false\n");
+	printf(info.p3.a ? "p3: true\n" : "p3: false\n");
+	printf(info.p4.a ? "p4: true\n" : "p4: false\n");
 
 	libusb_exit(NULL);
 	return 0;
