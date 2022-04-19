@@ -44,8 +44,9 @@ int open_adapter(struct AdapterHandle *adapter) {
 }
 
 const int ERR_UNEXPECTED_LENGTH = 1;
-const int ERR_NO_MAGIC = 2;
+const int ERR_BAD_MAGIC = 2;
 
+// update controller state, reading adapter's handle
 int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info) {
 	unsigned char data[LENGTH];
 	int r, len;
@@ -63,7 +64,7 @@ int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info)
 
 		if (*data != MAGIC)  {
 			fprintf(stderr, "[check_controller] did not find magic number: %#x", *data);
-			return ERR_NO_MAGIC;
+			return ERR_BAD_MAGIC;
 		} else {
 			unsigned char *startp1 = data + 1; // skip magic
 			unsigned char *startp2 = startp1 + CONTROLLER_WIDTH;
@@ -83,7 +84,6 @@ int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info)
 
 int main(void)
 {
-	// init libusb
 	if (libusb_init(NULL) < 0) { return 1; }
 
 	struct AdapterHandle adapter;
