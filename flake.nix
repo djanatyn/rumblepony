@@ -13,16 +13,18 @@
           buildInputs = with pkgs; [ libusb libusb.dev ];
 
           buildPhase = ''
-            gcc read-gcc.c "${pkgs.libusb}/lib/libusb-1.0.so" \
-              -I "${pkgs.libusb.dev}/include/libusb-1.0" \
-              -Wall \
-              -o read-gcc
-
             gcc -c read-gcc.c "${pkgs.libusb}/lib/libusb-1.0.so" \
               -I "${pkgs.libusb.dev}/include/libusb-1.0" \
               -Wall \
               -o read-gcc.o
+
             gcc -shared -o read-gcc.so read-gcc.o "${pkgs.libusb}/lib/libusb-1.0.so"
+
+            gcc main.c read-gcc.so "${pkgs.libusb}/lib/libusb-1.0.so" \
+              -I "${pkgs.libusb.dev}/include/libusb-1.0" \
+              -Wall \
+              -o read-gcc
+
           '';
 
           installPhase = ''

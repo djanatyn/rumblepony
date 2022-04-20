@@ -1,21 +1,20 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include "libusb.h"
 
-const int CONTROLLER_WIDTH = 9;
-const int A_BUTTON_OFFSET = 1;
-const int LENGTH = 37;
-const int MAYFLASH_ENDPOINT = 0x81;
-const int MAYFLASH_WRITE_ENDPOINT = 2;
-const int MAYFLASH_VID = 0x057e;
-const int MAYFLASH_PID = 0x0337;
-const int MAGIC = 0x21;
+extern const int CONTROLLER_WIDTH = 9;
+extern const int A_BUTTON_OFFSET = 1;
+extern const int LENGTH = 37;
+extern const int MAYFLASH_ENDPOINT = 0x81;
+extern const int MAYFLASH_WRITE_ENDPOINT = 2;
+extern const int MAYFLASH_VID = 0x057e;
+extern const int MAYFLASH_PID = 0x0337;
+extern const int MAGIC = 0x21;
 
-const int ERR_ADAPTER_NOT_FOUND = 1;
-const int ERR_UNEXPECTED_LENGTH = 1;
-const int ERR_BAD_MAGIC = 2;
-const int ERR_UNEXPECTED_LENGTH = 1;
-const int ERR_BAD_MAGIC = 2;
+extern const int ERR_ADAPTER_NOT_FOUND = 1;
+extern const int ERR_UNEXPECTED_LENGTH = 1;
+extern const int ERR_BAD_MAGIC = 2;
 
 struct Controller {
 	bool a;
@@ -33,4 +32,4 @@ struct AdapterHandle {
 };
 
 int open_adapter(struct AdapterHandle *adapter);
-int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info)
+int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info);

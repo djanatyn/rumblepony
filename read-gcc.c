@@ -2,32 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "libusb.h"
-
-const int CONTROLLER_WIDTH = 9;
-const int A_BUTTON_OFFSET = 1;
-const int LENGTH = 37;
-const int MAYFLASH_ENDPOINT = 0x81;
-const int MAYFLASH_WRITE_ENDPOINT = 2;
-const int MAYFLASH_VID = 0x057e;
-const int MAYFLASH_PID = 0x0337;
-const int MAGIC = 0x21;
-
-struct Controller {
-	bool a;
-};
-
-struct ControllerInfo {
-	struct Controller p1;
-	struct Controller p2;
-	struct Controller p3;
-	struct Controller p4;
-};
-
-struct AdapterHandle {
-	libusb_device_handle *handle;
-};
-
-const int ERR_ADAPTER_NOT_FOUND = 1;
+#include "read-gcc.h"
 
 // try to open mayflash adapter, setting handle
 int open_adapter(struct AdapterHandle *adapter) {
@@ -42,9 +17,6 @@ int open_adapter(struct AdapterHandle *adapter) {
 		return ERR_ADAPTER_NOT_FOUND;
 	}
 }
-
-const int ERR_UNEXPECTED_LENGTH = 1;
-const int ERR_BAD_MAGIC = 2;
 
 // update controller state, reading adapter's handle
 int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info) {
@@ -80,35 +52,4 @@ int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info)
 		}
 	}
 
-}
-
-int main(void)
-{
-	if (libusb_init(NULL) < 0) { return 1; }
-
-	struct AdapterHandle adapter;
-	int r;
-	r = open_adapter(&adapter);
-	switch (r) {
-		case 0:
-			fprintf(stderr, "device found: %p\n", adapter.handle);
-			break;
-		case ERR_ADAPTER_NOT_FOUND:
-			fprintf(stderr, "device not found\n");
-			return 1;
-		default:
-			fprintf(stderr, "unknown error");
-			return 1;
-	};
-
-	struct ControllerInfo info;
-	r = check_controller(&adapter, &info);
-
-	printf(info.p1.a ? "p1: true\n" : "p1: false\n");
-	printf(info.p2.a ? "p2: true\n" : "p2: false\n");
-	printf(info.p3.a ? "p3: true\n" : "p3: false\n");
-	printf(info.p4.a ? "p4: true\n" : "p4: false\n");
-
-	libusb_exit(NULL);
-	return 0;
 }
