@@ -17,7 +17,7 @@ struct ControllerInfo
   new create() => None
 
 struct AdapterHandle
-	var handle: Pointer[None] tag = Pointer[None]
+  var handle: Pointer[None] tag = Pointer[None]
 
   new create() => None
 
