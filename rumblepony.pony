@@ -4,7 +4,7 @@ use @open_adapter[I32](adapter: Pointer[None] tag)
 use @check_controller[I32](adapter: Pointer[None] tag, info: Pointer[ControllerInfo] tag)
 
 struct Controller
-  var a: Bool = false
+  var a: U8 = 0
 
   new create() => None
 
@@ -26,13 +26,15 @@ actor Main
     var result = @gamecube_adapter_init()
     env.out.print("initialized libusb: " + result.string())
 
-    var handle = AdapterHandle
-    result = @open_adapter(addressof handle)
-    env.out.print("opened adapter handle: " + result.string())
+    var adapter = AdapterHandle
+    result = @open_adapter(addressof adapter)
+    env.out.print("opened adapter adapter: " + result.string())
 
     var info = ControllerInfo
-    result = @check_controller(addressof handle, addressof info)
-    env.out.print("checked controller states: " + result.string())
 
-    env.out.print("success! :)")
+    result = @check_controller(addressof adapter, addressof info)
+    env.out.print("checked controller states: " + result.string())
+    env.out.print(info.p2.a.string())
+
     @gamecube_adapter_exit()
+    env.out.print("success! :)")

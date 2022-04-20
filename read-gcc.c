@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
 #include "libusb.h"
 #include "read-gcc.h"
@@ -43,9 +42,10 @@ int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info)
 		/* } */
 
 		if (*data != MAGIC)  {
-			fprintf(stderr, "[check_controller] did not find magic number: %#x", *data);
+			fprintf(stderr, "[check_controller] did not find magic number: %#x\n", *data);
 			return ERR_BAD_MAGIC;
 		} else {
+			fprintf(stderr, "[check_controller] success\n");
 			unsigned char *startp1 = data + 1; // skip magic
 			unsigned char *startp2 = startp1 + CONTROLLER_WIDTH;
 			unsigned char *startp3 = startp2 + CONTROLLER_WIDTH;
@@ -59,5 +59,4 @@ int check_controller(struct AdapterHandle *adapter, struct ControllerInfo *info)
 			return 0;
 		}
 	}
-
 }
