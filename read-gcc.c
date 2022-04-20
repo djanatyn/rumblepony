@@ -4,6 +4,14 @@
 #include "libusb.h"
 #include "read-gcc.h"
 
+int gamecube_adapter_init() {
+	return libusb_init(NULL);
+}
+
+void gamecube_adapter_exit() {
+	libusb_exit(NULL);
+}
+
 // try to open mayflash adapter, setting handle
 int open_adapter(struct AdapterHandle *adapter) {
 	libusb_device_handle *handle =

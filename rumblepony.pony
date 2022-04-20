@@ -1,11 +1,12 @@
-use "path:/nix/store/xjfjkiqmchp40z83krkyjhx0p7mmsbg6-read-gcc/lib"
-use "lib:read-gcc"
-
-use @open_adapter[I32](adapter: Pointer[U8] tag)
-use @check_controller[I32](adapter: Pointer[U8] tag, info: Pointer[ControllerInfo] tag)
+use @gamecube_adapter_init[I32]()
+use @gamecube_adapter_exit[None]()
+use @open_adapter[I32](adapter: Pointer[None] tag)
+use @check_controller[I32](adapter: Pointer[None] tag, info: Pointer[ControllerInfo] tag)
 
 struct Controller
   var a: Bool = false
+
+  new create() => None
 
 struct ControllerInfo
   embed p1: Controller = Controller
@@ -16,12 +17,22 @@ struct ControllerInfo
   new create() => None
 
 struct AdapterHandle
-	var handle: Pointer[U8] tag = Pointer[U8]
+	var handle: Pointer[None] tag = Pointer[None]
+
+  new create() => None
 
 actor Main
   new create(env: Env) =>
+    var result = @gamecube_adapter_init()
+    env.out.print("initialized libusb: " + result.string())
+
     var handle = AdapterHandle
+    result = @open_adapter(addressof handle)
+    env.out.print("opened adapter handle: " + result.string())
 
-    let result: I32 = @open_adapter(handle.handle)
+    var info = ControllerInfo
+    result = @check_controller(addressof handle, addressof info)
+    env.out.print("checked controller states: " + result.string())
 
-    env.out.print("hello world")
+    env.out.print("success! :)")
+    @gamecube_adapter_exit()
