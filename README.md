@@ -2,6 +2,10 @@
 
 The goal: **write a Pony program that rumbles a GameCube controller (connected via USB) to rumble when the A button is held.**
 
+# status
+
+Taking a break from this project, had trouble reading the GameCube controller. TODO: revisit later.
+
 # motivation
 
 * explore `libusb` C API
